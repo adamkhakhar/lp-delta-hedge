@@ -7,7 +7,8 @@ Includes emperical results and plots for paper on delta hedging LP positions.
 ├── LICENSE
 ├── README.md
 ├── results
-│   └── IL.png
+│   ├── IL.png
+│   └── LPPNL.png
 ├── src
 │   └── plot_runner.py
 └── utils
