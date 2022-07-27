@@ -2,7 +2,7 @@ import os
 import sys
 
 sys.path.append(
-    f"{os.path.dirname(os.path.dirname(os.path.realpath(__file__)))}/utils/"
+    f"{os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))}/utils/"
 )
 import image_creation
 
@@ -28,3 +28,8 @@ image_creation.create_plot_from_fn(
     ylabel="Liquidity Position PNL",
     title="Liquidity Position PNL",
 )
+
+image_creation.create_liquidity_plot(2)
+image_creation.create_liquidity_plot(3)
+
+image_creation.create_position_value_plot()
