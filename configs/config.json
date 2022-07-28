@@ -1,0 +1,11 @@
+{
+    "name": "test",
+    "asset": "ETH",
+    "expired": false,
+    "learning_rate": 0.01,
+    "final_price_lower_bound": 0,
+    "final_price_upper_bound": 10,
+    "num_samples": 1000000,
+    "batch_size": 2000,
+    "test_batch_size": 100
+}
