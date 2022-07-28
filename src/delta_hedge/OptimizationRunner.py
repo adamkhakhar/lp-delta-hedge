@@ -38,9 +38,11 @@ class OptimizationRunner:
             assert key in train_params
 
         self.name = name
+        print("Beginning to fetch derivatives...")
         self.derivs = retrieve_and_create_derivatives(
             deriv_params["asset"], expired=deriv_params["expired"]
         )
+        print("Derivatives fetched...")
         self.model = OptionsOptimizer(self.derivs)
         self.train_loader = torch.utils.data.DataLoader(
             AlgorithmicDataSet(
@@ -82,14 +84,14 @@ class OptimizationRunner:
     def present_pnl(self, title):
         # display options portfolio PNL as a function of price
         create_plot_from_fn(
-            self.get_pnl_fun(),
+            lambda x: self.get_pnl_fun()(x) / 1000,
             self.data_params["final_price_lower_bound"],
             self.data_params["final_price_upper_bound"],
             y_min=None,
             y_max=None,
-            save_title=self.name,
-            xlabel=f"{self.deriv_params['asset']} Price",
-            ylabel="Options Portfolio Payoff",
+            save_title=title,
+            xlabel=r"p_{a;b}^f",
+            ylabel="PNL ($ Thousands)",
             title=title,
             x_axis_line=True,
             shade_pnl=True,
