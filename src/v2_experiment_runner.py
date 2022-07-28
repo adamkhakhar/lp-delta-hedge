@@ -32,23 +32,8 @@ if __name__ == "__main__":
         "test_batch_size": config["batch_size"],
         "log_every": config["log_every"],
     }
-    runner = OptimizationRunner(config["name"], data_params, deriv_params, train_params)
+    runner = OptimizationRunner(config["name"], TARGET_FUN, data_params, deriv_params, train_params)
     runner.train()
     runner.pretty_print_results()
     runner.present_pnl("Options Portfolio Payoff - ETH USD - Uniform Liquidity")
-    options_portfolio_pnl_fun = runner.get_pnl_fun()
-    combined_pnl = lambda x: (TARGET_FUN(x) + options_portfolio_pnl_fun(x)) / 1000
-    create_plot_from_fn(
-        combined_pnl,
-        config["final_price_lower_bound"],
-        config["final_price_upper_bound"],
-        y_min=None,
-        y_max=None,
-        save_title="experiment_v2_combined_lppnl_options",
-        xlabel=r"p_{a;b}^f",
-        ylabel="PNL ($ Thousands)",
-        title="ETH-USDT Delta-Hedged Liquidity Position PNL - Uniswap v2",
-        x_axis_line=True,
-        shade_pnl=True,
-        num=1_000,
-    )
+    runner.present_strategy_pnl("ETH-USDT Delta-Hedged Liquidity Position PNL - Uniswap v2")

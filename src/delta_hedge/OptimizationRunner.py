@@ -1,6 +1,7 @@
 import os
 import sys
 import torch
+import time
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 sys.path.append(BASE_DIR)
@@ -16,7 +17,8 @@ from utils.image_creation import create_plot_from_fn
 
 
 class OptimizationRunner:
-    def __init__(self, name, data_params, deriv_params, train_params):
+    def __init__(self, name, target_fun, data_params, deriv_params, train_params):
+        self.target_fun = target_fun
         keys_in_data_params = [
             "final_price_lower_bound",
             "final_price_upper_bound",
@@ -39,10 +41,11 @@ class OptimizationRunner:
 
         self.name = name
         print("Beginning to fetch derivatives...")
+        start_time = time.time()
         self.derivs = retrieve_and_create_derivatives(
             deriv_params["asset"], expired=deriv_params["expired"]
         )
-        print("Derivatives fetched...")
+        print(f"Derivatives fetched ({int(time.time() - start_time)} sec)...")
         self.model = OptionsOptimizer(self.derivs)
         self.train_loader = torch.utils.data.DataLoader(
             AlgorithmicDataSet(
@@ -89,7 +92,7 @@ class OptimizationRunner:
             self.data_params["final_price_upper_bound"],
             y_min=None,
             y_max=None,
-            save_title=title,
+            save_title=self.name + "_options_pnl_plot",
             xlabel=r"p_{a;b}^f",
             ylabel="PNL ($ Thousands)",
             title=title,
@@ -104,4 +107,21 @@ class OptimizationRunner:
                 self.learned_theta[i] * (self.derivs[i].payoff_fun(x))
                 for i in range(len(self.derivs))
             ]
+        )
+
+    def present_strategy_pnl(self, title):
+        combined_pnl = lambda x: (self.target_fun(x) + self.get_pnl_fun()(x)) / 1000
+        create_plot_from_fn(
+            combined_pnl,
+            self.data_params["final_price_lower_bound"],
+            self.data_params["final_price_upper_bound"],
+            y_min=None,
+            y_max=None,
+            save_title=self.name + "_combined_pnl_plot",
+            xlabel=r"p_{a;b}^f",
+            ylabel="PNL ($ Thousands)",
+            title=title,
+            x_axis_line=True,
+            shade_pnl=True,
+            num=1_000,
         )
