@@ -14,18 +14,23 @@ def retrieve_instruments(currency, expired=False):
     assert currency in ["ETH", "SOL", "BTC"]
     expired = "true" if expired else "false"
     instruments = requests.get(
-        f"https://deribit.com/api/v2/public/get_instruments?currency={currency}&expired={expired}&kind=option"
+        f"https://deribit.com/api/v2/public/get_book_summary_by_currency?currency={currency}&kind=option"
     ).json()["result"]
     return instruments
 
 
-def create_derivatives_for_instrument(instrument_data, ob_data):
+def create_derivatives_for_instrument(instrument_data, initial_asset_price):
     name = instrument_data["instrument_name"]
-    assert name.endswith("C") or name.endswith("P")
-    strike = instrument_data["strike"]
-    best_bid = ob_data["best_bid_price"]
-    best_ask = ob_data["best_ask_price"]
-    info = {"instrument_data": instrument_data, "ob_data": ob_data}
+    if (
+        not (name.endswith("C") or name.endswith("P"))
+        or (instrument_data["bid_price"] is None)
+        or (instrument_data["ask_price"] is None)
+    ):
+        return None, None
+    strike = int(name.split("-")[-2])
+    best_bid = instrument_data["bid_price"] * initial_asset_price
+    best_ask = instrument_data["ask_price"] * initial_asset_price
+    info = {"instrument_data": instrument_data}
     long_payoff_fun = None
     short_payoff_fun = None
     # call
@@ -44,22 +49,20 @@ def create_derivatives_for_instrument(instrument_data, ob_data):
     return long_deriv, short_deriv
 
 
-def create_derivatives_from_instrument_data(data):
+def create_derivatives_from_instrument_data(data, initial_asset_price):
     assert type(data) == list
     derivatives = []
     for instrument in data:
-        ob_data = requests.get(
-            f"https://deribit.com/api/v2/public/get_order_book_by_instrument_id?instrument_id={instrument['instrument_id']}&depth=1"
-        ).json()["result"]
-        # skip instruments with no volume
-        if len(ob_data["bids"]) == 0 or len(ob_data["asks"]) == 0:
+        long_deriv, short_deriv = create_derivatives_for_instrument(
+            instrument, initial_asset_price
+        )
+        if long_deriv is None or short_deriv is None:
             continue
-        long_deriv, short_deriv = create_derivatives_for_instrument(instrument, ob_data)
         derivatives.append(long_deriv)
         derivatives.append(short_deriv)
     return derivatives
 
 
-def retrieve_and_create_derivatives(currency, expired=False):
-    instrumets = retrieve_instruments(currency, expired=expired)
-    return create_derivatives_from_instrument_data(instrumets)
+def retrieve_and_create_derivatives(currency, initial_asset_price):
+    instrumets = retrieve_instruments(currency)
+    return create_derivatives_from_instrument_data(instrumets, initial_asset_price)

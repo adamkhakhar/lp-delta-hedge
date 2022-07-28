@@ -24,7 +24,10 @@ if __name__ == "__main__":
         "final_price_upper_bound": config["final_price_upper_bound"],
         "target_function": TARGET_FUN,
     }
-    deriv_params = {"asset": config["asset"], "expired": config["expired"]}
+    deriv_params = {
+        "asset": config["asset"],
+        "initial_asset_price": config["initial_asset_price"],
+    }
     train_params = {
         "learning_rate": config["learning_rate"],
         "num_samples": config["num_samples"],
@@ -32,8 +35,12 @@ if __name__ == "__main__":
         "test_batch_size": config["batch_size"],
         "log_every": config["log_every"],
     }
-    runner = OptimizationRunner(config["name"], TARGET_FUN, data_params, deriv_params, train_params)
+    runner = OptimizationRunner(
+        config["name"], TARGET_FUN, data_params, deriv_params, train_params
+    )
     runner.train()
     runner.pretty_print_results()
     runner.present_pnl("Options Portfolio Payoff - ETH USD - Uniform Liquidity")
-    runner.present_strategy_pnl("ETH-USDT Delta-Hedged Liquidity Position PNL - Uniswap v2")
+    runner.present_strategy_pnl(
+        "ETH-USDT Delta-Hedged Liquidity Position PNL - Uniswap v2"
+    )

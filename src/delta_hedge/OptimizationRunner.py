@@ -26,7 +26,7 @@ class OptimizationRunner:
         ]
         for key in keys_in_data_params:
             assert key in data_params
-        keys_in_deriv_params = ["asset", "expired"]
+        keys_in_deriv_params = ["asset", "initial_asset_price"]
         for key in keys_in_deriv_params:
             assert key in deriv_params
         keys_in_train_params = [
@@ -40,10 +40,9 @@ class OptimizationRunner:
             assert key in train_params
 
         self.name = name
-        print("Beginning to fetch derivatives...")
         start_time = time.time()
         self.derivs = retrieve_and_create_derivatives(
-            deriv_params["asset"], expired=deriv_params["expired"]
+            deriv_params["asset"], deriv_params["initial_asset_price"]
         )
         print(f"Derivatives fetched ({int(time.time() - start_time)} sec)...")
         self.model = OptionsOptimizer(self.derivs)
@@ -54,7 +53,7 @@ class OptimizationRunner:
                 data_params["target_function"],
                 train_params["num_samples"],
             ),
-            batch_size=train_params["batch_sze"],
+            batch_size=train_params["batch_size"],
         )
         self.test_loader = torch.utils.data.DataLoader(
             AlgorithmicDataSet(
@@ -71,7 +70,7 @@ class OptimizationRunner:
             self.train_loader,
             self.test_loader,
             train_params["learning_rate"],
-            train_params["num_samples"] // train_params["batch_sze"],
+            train_params["num_samples"] // train_params["batch_size"],
             log_every=train_params["log_every"],
         )
         self.learned_theta = None
