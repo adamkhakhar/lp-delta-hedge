@@ -34,6 +34,7 @@ class Train:
         train_loader,
         test_loader,
         learning_rate,
+        num_grad_steps,
         l1_lambda=0.01,
         log_every=100,
         device=None,
@@ -49,8 +50,9 @@ class Train:
         )
         self.print_every = print_every
         self.model = model.to(self.device)
-        self.optimizer = torch.optim.Adam(self.model.parameters(), lr=learning_rate)
+        self.optimizer = torch.optim.Adam([self.model.theta], lr=learning_rate)
         self.l1_lambda = l1_lambda
+        self.num_grad_steps = num_grad_steps
 
         self.curr_loss = 0
         self.start_time = None
@@ -74,7 +76,7 @@ class Train:
             model, train_loader, optimizer
         """
         self.start_time = start_time
-        return self.model, self.data_loader, self.optimizer
+        return self.model, self.train_loader, self.optimizer
 
     def calculate_loss(self, outputs, targets):
         """Calculates loss of a minibatch
@@ -92,10 +94,8 @@ class Train:
         tensor
             scalar loss
         """
-        mse_loss = nn.MSELoss()(outputs, targets.reshape(targets.shape[0], 1))
-        l1_regularization = self.l1_lambda * sum(
-            p.abs().sum() for p in self.model.parameters()
-        )
+        mse_loss = nn.MSELoss()(outputs, targets)
+        l1_regularization = self.l1_lambda * (sum(self.model.theta.abs()))
         return mse_loss + l1_regularization
 
     def iteration_update(self, i, features, outputs, targets, loss):

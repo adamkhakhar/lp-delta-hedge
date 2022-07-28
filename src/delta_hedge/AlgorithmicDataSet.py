@@ -15,6 +15,6 @@ class AlgorithmicDataSet:
     def __getitem__(self, idx):
         x = np.random.uniform(low=self.price_lower, high=self.price_upper)
         return {
-            "sample": torch.tensor([x], dtype=torch.float),
+            "sample": torch.tensor(x, dtype=torch.float),
             "target": torch.tensor(self.fun(x), dtype=torch.float),
         }
