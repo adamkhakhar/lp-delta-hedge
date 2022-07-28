@@ -1,5 +1,5 @@
 class Derivative:
-    def __init__(self, name, fun, info):
+    def __init__(self, name, payoff_fun, info):
         self.name = name
-        self.fun = fun
+        self.payoff_fun = payoff_fun
         self.deribit_info = info
