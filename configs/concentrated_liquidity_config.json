@@ -1,11 +1,11 @@
 {
-    "name": "test",
+    "name": "UniswapV3_ETH_USD",
     "asset": "ETH",
     "expired": false,
     "learning_rate": 0.01,
     "final_price_lower_bound": 0,
-    "final_price_upper_bound": 10,
-    "num_samples": 1000000,
+    "final_price_upper_bound": 5000,
+    "num_samples": 10000000,
     "batch_size": 2000,
     "test_batch_size": 100
 }

@@ -49,6 +49,7 @@ def create_plot_from_fn(
     ttl = ax.title
     ttl.set_weight("bold")
 
+    plt.tight_layout()
     plt.grid(linestyle="--", alpha=0.25)
     plt.savefig(f"{save_path}/{save_title}")
 

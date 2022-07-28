@@ -8,7 +8,7 @@ from delta_hedge.OptionsOptimizer import OptionsOptimizer as OptionsOptimizer
 from delta_hedge.Train import Train as Train
 from delta_hedge.Derivative import Derivative as Derivative
 from delta_hedge.AlgorithmicDataSet import AlgorithmicDataSet as AlgorithmicDataSet
-import deribit.retrieve_instruments as retrieve_and_create_derivatives
+from deribit.retrieve_instruments import retrieve_and_create_derivatives
 
 ROOT_DIR = os.path.dirname(BASE_DIR)
 sys.path.append(ROOT_DIR)
@@ -30,7 +30,7 @@ class OptimizationRunner:
         keys_in_train_params = [
             "learning_rate",
             "num_samples",
-            "batch_sze",
+            "batch_size",
             "test_batch_size",
             "log_every",
         ]
@@ -39,7 +39,7 @@ class OptimizationRunner:
 
         self.name = name
         self.derivs = retrieve_and_create_derivatives(
-            deriv_params["currency"], expired=deriv_params["expired"]
+            deriv_params["asset"], expired=deriv_params["expired"]
         )
         self.model = OptionsOptimizer(self.derivs)
         self.train_loader = torch.utils.data.DataLoader(
@@ -82,12 +82,7 @@ class OptimizationRunner:
     def present_pnl(self, title):
         # display options portfolio PNL as a function of price
         create_plot_from_fn(
-            lambda x: sum(
-                [
-                    self.learned_theta[i] * (self.derivs[i].payoff_fun(x))
-                    for i in range(len(self.derivs))
-                ]
-            ),
+            self.get_pnl_fun(),
             self.data_params["final_price_lower_bound"],
             self.data_params["final_price_upper_bound"],
             y_min=None,
@@ -99,4 +94,12 @@ class OptimizationRunner:
             x_axis_line=True,
             shade_pnl=True,
             num=1_000,
+        )
+
+    def get_pnl_fun(self):
+        return lambda x: sum(
+            [
+                self.learned_theta[i] * (self.derivs[i].payoff_fun(x))
+                for i in range(len(self.derivs))
+            ]
         )
