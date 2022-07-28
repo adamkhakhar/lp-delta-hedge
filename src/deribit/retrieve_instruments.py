@@ -7,7 +7,7 @@ LP_DELTA_HEDGE_PATH = os.path.dirname(
 )
 sys.path.append(LP_DELTA_HEDGE_PATH + "/src")
 
-from delta_hedge import Derivative
+from delta_hedge.Derivative import Derivative
 
 
 def retrieve_instruments(currency, expired=False):
