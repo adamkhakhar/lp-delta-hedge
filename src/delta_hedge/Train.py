@@ -144,7 +144,8 @@ class Train:
                     "soft_error": self.soft_error_lst,
                 }
                 print(
-                    f"[{i} / {self.num_grad_steps}] Train Loss: {scaled_curr_loss} | Time {int(time.time() - self.start_time)}"
+                    f"[{i} / {self.num_grad_steps}] Train Loss: {scaled_curr_loss} | Time {int(time.time() - self.start_time)}",
+                    flush=True,
                 )
                 self.curr_loss = 0
 

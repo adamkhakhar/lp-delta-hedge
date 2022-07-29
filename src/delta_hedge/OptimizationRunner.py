@@ -44,7 +44,9 @@ class OptimizationRunner:
         self.derivs = retrieve_and_create_derivatives(
             deriv_params["asset"], deriv_params["initial_asset_price"]
         )
-        print(f"Derivatives fetched ({int(time.time() - start_time)} sec)...")
+        print(
+            f"Derivatives fetched ({int(time.time() - start_time)} sec)...", flush=True
+        )
         self.model = OptionsOptimizer(self.derivs)
         self.train_loader = torch.utils.data.DataLoader(
             AlgorithmicDataSet(
