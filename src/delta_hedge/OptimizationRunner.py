@@ -2,6 +2,7 @@ import os
 import sys
 import torch
 import time
+import pickle
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 sys.path.append(BASE_DIR)
@@ -26,7 +27,7 @@ class OptimizationRunner:
         ]
         for key in keys_in_data_params:
             assert key in data_params
-        keys_in_deriv_params = ["asset", "initial_asset_price"]
+        keys_in_deriv_params = ["asset", "initial_asset_price", "long_only"]
         for key in keys_in_deriv_params:
             assert key in deriv_params
         keys_in_train_params = [
@@ -42,7 +43,9 @@ class OptimizationRunner:
         self.name = name
         start_time = time.time()
         self.derivs = retrieve_and_create_derivatives(
-            deriv_params["asset"], deriv_params["initial_asset_price"]
+            deriv_params["asset"],
+            deriv_params["initial_asset_price"],
+            deriv_params["long_only"],
         )
         print(
             f"Derivatives fetched ({int(time.time() - start_time)} sec)...", flush=True
@@ -126,3 +129,8 @@ class OptimizationRunner:
             shade_pnl=True,
             num=1_000,
         )
+
+    def save_state(self):
+        data = {"derivs": self.derivs, "model": self.model}
+        with open(f"{ROOT_DIR}/results/{self.name}_save_state.bin", "wb") as f:
+            pickle.dump(data, f)

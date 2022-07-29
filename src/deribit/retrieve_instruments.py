@@ -49,7 +49,7 @@ def create_derivatives_for_instrument(instrument_data, initial_asset_price):
     return long_deriv, short_deriv
 
 
-def create_derivatives_from_instrument_data(data, initial_asset_price):
+def create_derivatives_from_instrument_data(data, initial_asset_price, long_only):
     assert type(data) == list
     derivatives = []
     for instrument in data:
@@ -59,10 +59,13 @@ def create_derivatives_from_instrument_data(data, initial_asset_price):
         if long_deriv is None or short_deriv is None:
             continue
         derivatives.append(long_deriv)
-        derivatives.append(short_deriv)
+        if not long_only:
+            derivatives.append(short_deriv)
     return derivatives
 
 
-def retrieve_and_create_derivatives(currency, initial_asset_price):
+def retrieve_and_create_derivatives(currency, initial_asset_price, long_only):
     instrumets = retrieve_instruments(currency)
-    return create_derivatives_from_instrument_data(instrumets, initial_asset_price)
+    return create_derivatives_from_instrument_data(
+        instrumets, initial_asset_price, long_only
+    )

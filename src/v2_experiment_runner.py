@@ -27,6 +27,7 @@ if __name__ == "__main__":
     deriv_params = {
         "asset": config["asset"],
         "initial_asset_price": config["initial_asset_price"],
+        "long_only": config["long_only"],
     }
     train_params = {
         "learning_rate": config["learning_rate"],
@@ -44,3 +45,4 @@ if __name__ == "__main__":
     runner.present_strategy_pnl(
         "ETH-USDT Delta-Hedged Liquidity Position PNL - Uniswap v2"
     )
+    runner.save_state()
