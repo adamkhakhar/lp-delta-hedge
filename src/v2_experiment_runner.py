@@ -40,9 +40,10 @@ if __name__ == "__main__":
         config["name"], TARGET_FUN, data_params, deriv_params, train_params
     )
     runner.train()
+    print("Finished training...")
+    runner.save_state()
     runner.pretty_print_results()
     runner.present_pnl("Options Portfolio Payoff - ETH USD - Uniform Liquidity")
     runner.present_strategy_pnl(
         "ETH-USDT Delta-Hedged Liquidity Position PNL - Uniswap v2"
     )
-    runner.save_state()

@@ -44,8 +44,8 @@ def create_derivatives_for_instrument(instrument_data, initial_asset_price):
         long_payoff_fun = lambda x: max(0, strike - x) - best_ask
         # short
         short_payoff_fun = lambda x: best_bid - max(0, strike - x)
-    long_deriv = Derivative(name + "_LONG", long_payoff_fun, info)
-    short_deriv = Derivative(name + "_SHORT", short_payoff_fun, info)
+    long_deriv = Derivative(name + "_LONG", long_payoff_fun, best_bid, best_ask, info)
+    short_deriv = Derivative(name + "_SHORT", short_payoff_fun, best_bid, best_ask, info)
     return long_deriv, short_deriv
 
 
@@ -65,7 +65,8 @@ def create_derivatives_from_instrument_data(data, initial_asset_price, long_only
 
 
 def retrieve_and_create_derivatives(currency, initial_asset_price, long_only):
-    instrumets = retrieve_instruments(currency)
-    return create_derivatives_from_instrument_data(
-        instrumets, initial_asset_price, long_only
+    instruments = retrieve_instruments(currency)
+    derivs = create_derivatives_from_instrument_data(
+        instruments, initial_asset_price, long_only
     )
+    return derivs

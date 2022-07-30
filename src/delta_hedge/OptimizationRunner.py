@@ -3,6 +3,7 @@ import sys
 import torch
 import time
 import pickle
+import json
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 sys.path.append(BASE_DIR)
@@ -51,6 +52,7 @@ class OptimizationRunner:
             f"Derivatives fetched ({int(time.time() - start_time)} sec)...", flush=True
         )
         self.model = OptionsOptimizer(self.derivs)
+        self.data_params = data_params
         self.train_loader = torch.utils.data.DataLoader(
             AlgorithmicDataSet(
                 data_params["final_price_lower_bound"],
@@ -90,14 +92,15 @@ class OptimizationRunner:
 
     def present_pnl(self, title):
         # display options portfolio PNL as a function of price
+        pnl_fun = self.get_pnl_fun()
         create_plot_from_fn(
-            lambda x: self.get_pnl_fun()(x) / 1000,
+            lambda x: pnl_fun(x) / 1000,
             self.data_params["final_price_lower_bound"],
             self.data_params["final_price_upper_bound"],
             y_min=None,
             y_max=None,
             save_title=self.name + "_options_pnl_plot",
-            xlabel=r"p_{a;b}^f",
+            xlabel=r"$p_{a;b}^f$",
             ylabel="PNL ($ Thousands)",
             title=title,
             x_axis_line=True,
@@ -122,7 +125,7 @@ class OptimizationRunner:
             y_min=None,
             y_max=None,
             save_title=self.name + "_combined_pnl_plot",
-            xlabel=r"p_{a;b}^f",
+            xlabel=r"$p_{a;b}^f$",
             ylabel="PNL ($ Thousands)",
             title=title,
             x_axis_line=True,
@@ -130,7 +133,21 @@ class OptimizationRunner:
             num=1_000,
         )
 
+    def _store_data(self, fname, data):
+        with open(fname, "wb") as f:
+            pickle.dump(data, f, pickle.HIGHEST_PROTOCOL)
+
     def save_state(self):
-        data = {"derivs": self.derivs, "model": self.model}
-        with open(f"{ROOT_DIR}/results/{self.name}_save_state.bin", "wb") as f:
-            pickle.dump(data, f)
+        fname = f"{ROOT_DIR}/results/{self.name}_model_save_state.bin"
+        torch.save(self.model.state_dict(), fname)
+        deriv_list = []
+        for d in self.derivs:
+            deriv_list.append({
+                "name": d.name,
+                "deribit_info": d.deribit_info,
+                "bid": d.bid,
+                "ask": d.ask
+            })
+        fname = f"{ROOT_DIR}/results/{self.name}_deriv_save_state.bin"
+        with open(fname, "w") as f:
+            f.write(json.dumps(deriv_list))
