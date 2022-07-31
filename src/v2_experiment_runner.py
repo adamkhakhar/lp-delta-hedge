@@ -8,9 +8,6 @@ sys.path.append(BASE_DIR)
 from delta_hedge.OptimizationRunner import OptimizationRunner as OptimizationRunner
 
 ROOT_DIR = os.path.dirname(BASE_DIR)
-sys.path.append(ROOT_DIR + "/utils")
-
-ROOT_DIR = os.path.dirname(BASE_DIR)
 
 if __name__ == "__main__":
     path_to_config = ROOT_DIR + "/configs/uniform_liquidity_config.json"
