@@ -19,7 +19,7 @@ def create_plot_from_fn(
     shade_pnl=True,
     num=1_000,
 ):
-    fzig, ax = plt.subplots()
+    _, ax = plt.subplots()
     x = None
     y = None
     if type(f) == list:
@@ -54,6 +54,9 @@ def create_plot_from_fn(
     # tweak the title
     ttl = ax.title
     ttl.set_weight("bold")
+
+    if y_min is not None and y_max is not None:
+        ax.set_ylim([y_min, y_max])
 
     plt.tight_layout()
     plt.grid(linestyle="--", alpha=0.25)

@@ -91,6 +91,23 @@ class OptimizationRunner:
         for i in range(len(self.derivs)):
             print(f"Derivative : {self.derivs[i].name} | Qty : {self.learned_theta[i]}")
 
+    def present_lppnl(self, title, y_min=None, y_max=None):
+        lppnl_fun = lambda x: self.data_params["target_function"](-1 * x)
+        create_plot_from_fn(
+            lambda x: lppnl_fun(x) / 1000,
+            self.data_params["final_price_lower_bound"],
+            self.data_params["final_price_upper_bound"],
+            y_min=y_min,
+            y_max=y_max,
+            save_title=self.name + "_lppnl_plot",
+            xlabel=r"$p_{a;b}^f$",
+            ylabel="PNL ($ Thousands)",
+            title=title,
+            x_axis_line=True,
+            shade_pnl=True,
+            num=1_000,
+        )
+
     def present_pnl(self, title):
         # display options portfolio PNL as a function of price
         pnl_fun = self.get_pnl_fun()
