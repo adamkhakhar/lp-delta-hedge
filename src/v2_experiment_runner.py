@@ -9,7 +9,6 @@ from delta_hedge.OptimizationRunner import OptimizationRunner as OptimizationRun
 
 ROOT_DIR = os.path.dirname(BASE_DIR)
 sys.path.append(ROOT_DIR + "/utils")
-from image_creation import create_plot_from_fn
 
 ROOT_DIR = os.path.dirname(BASE_DIR)
 
