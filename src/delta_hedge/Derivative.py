@@ -5,4 +5,3 @@ class Derivative:
         self.deribit_info = info
         self.bid = bid
         self.ask = ask
-

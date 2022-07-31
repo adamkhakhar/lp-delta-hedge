@@ -117,17 +117,23 @@ class OptimizationRunner:
             ]
         )
 
+    def get_combined_pnl_fun(self):
+        return (
+            lambda x: (-1 * self.target_fun(x) + self.get_pnl_fun()(x))
+            / self.data_params["portfolio_initial_value"]
+            * 100
+        )
+
     def present_strategy_pnl(self, title):
-        combined_pnl = lambda x: (-1 * self.target_fun(x) + self.get_pnl_fun()(x)) / 1000
         create_plot_from_fn(
-            combined_pnl,
+            self.get_combined_pnl_fun(),
             self.data_params["final_price_lower_bound"],
             self.data_params["final_price_upper_bound"],
             y_min=None,
             y_max=None,
             save_title=self.name + "_combined_pnl_plot",
             xlabel=r"$p_{a;b}^f$",
-            ylabel="PNL ($ Thousands)",
+            ylabel="PNL (%)",
             title=title,
             x_axis_line=True,
             shade_pnl=True,
@@ -143,20 +149,40 @@ class OptimizationRunner:
         torch.save(self.model.state_dict(), fname)
         deriv_list = []
         for d in self.derivs:
-            deriv_list.append({
-                "name": d.name,
-                "deribit_info": d.deribit_info,
-                "bid": d.bid,
-                "ask": d.ask
-            })
-        combined_pnl = lambda x: (-1 * self.target_fun(x) + self.get_pnl_fun()(x)) / 1000
-        deriv_list.append({
-            "combined_pnl": [combined_pnl(x) for x in np.linspace(self.data_params["final_price_lower_bound"], self.data_params["final_price_upper_bound"], 1_000)]
-        })
+            deriv_list.append(
+                {
+                    "name": d.name,
+                    "deribit_info": d.deribit_info,
+                    "bid": d.bid,
+                    "ask": d.ask,
+                }
+            )
+        combined_pnl = self.get_combined_pnl_fun()
+        deriv_list.append(
+            {
+                "combined_pnl": [
+                    combined_pnl(x)
+                    for x in np.linspace(
+                        self.data_params["final_price_lower_bound"],
+                        self.data_params["final_price_upper_bound"],
+                        1_000,
+                    )
+                ]
+            }
+        )
         pnl_fun = self.get_pnl_fun()
-        deriv_list.append({
-            "pnl_fun": [pnl_fun(x) for x in np.linspace(self.data_params["final_price_lower_bound"], self.data_params["final_price_upper_bound"], 1_000)]
-        })
+        deriv_list.append(
+            {
+                "pnl_fun": [
+                    pnl_fun(x)
+                    for x in np.linspace(
+                        self.data_params["final_price_lower_bound"],
+                        self.data_params["final_price_upper_bound"],
+                        1_000,
+                    )
+                ]
+            }
+        )
         fname = f"{ROOT_DIR}/results/{self.name}_deriv_save_state.bin"
         with open(fname, "w") as f:
             f.write(json.dumps(deriv_list))
