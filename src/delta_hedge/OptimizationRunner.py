@@ -4,6 +4,7 @@ import torch
 import time
 import pickle
 import json
+import numpy as np
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 sys.path.append(BASE_DIR)
@@ -117,7 +118,7 @@ class OptimizationRunner:
         )
 
     def present_strategy_pnl(self, title):
-        combined_pnl = lambda x: (self.target_fun(x) + self.get_pnl_fun()(x)) / 1000
+        combined_pnl = lambda x: (-1 * self.target_fun(x) + self.get_pnl_fun()(x)) / 1000
         create_plot_from_fn(
             combined_pnl,
             self.data_params["final_price_lower_bound"],
@@ -148,6 +149,14 @@ class OptimizationRunner:
                 "bid": d.bid,
                 "ask": d.ask
             })
+        combined_pnl = lambda x: (-1 * self.target_fun(x) + self.get_pnl_fun()(x)) / 1000
+        deriv_list.append({
+            "combined_pnl": [combined_pnl(x) for x in np.linspace(self.data_params["final_price_lower_bound"], self.data_params["final_price_upper_bound"], 1_000)]
+        })
+        pnl_fun = self.get_pnl_fun()
+        deriv_list.append({
+            "pnl_fun": [pnl_fun(x) for x in np.linspace(self.data_params["final_price_lower_bound"], self.data_params["final_price_upper_bound"], 1_000)]
+        })
         fname = f"{ROOT_DIR}/results/{self.name}_deriv_save_state.bin"
         with open(fname, "w") as f:
             f.write(json.dumps(deriv_list))
