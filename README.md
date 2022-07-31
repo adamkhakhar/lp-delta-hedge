@@ -3,7 +3,7 @@ Includes code to find options portfolio to Delta-Hedge both Uniswap v2 and Unisw
 
 # Getting Started
 1. Update config in `/configs`. (`uniform_liquidity_config.json` for Uniswap v2 and `concentrated_liquidity_config.json` for Uniswap v3).
-2. run `python3 src/v2_experiment_runner.py` for Uniswap v2 or `python3 src/v3_experiment_runner.py` for Uniswap v3.
+2. Run `python3 src/v2_experiment_runner.py` for Uniswap v2 or `python3 src/v3_experiment_runner.py` for Uniswap v3.
 
 ## Codebase Structure
 ```

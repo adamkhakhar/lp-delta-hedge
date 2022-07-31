@@ -7,7 +7,7 @@ sys.path.append(
 import image_creation
 
 
-IL = lambda x: (2*((x  +1)**.5) / (x + 2) - 1) * 100
+IL = lambda x: (2 * ((x + 1) ** 0.5) / (x + 2) - 1) * 100
 image_creation.create_plot_from_fn(
     IL,
     -1,
@@ -35,7 +35,7 @@ image_creation.create_liquidity_plot(3)
 image_creation.create_position_value_plot()
 
 
-LPPNL_Uniswap_v2 = lambda x: 463.647 * (((x/1613.68)**.5)-1)
+LPPNL_Uniswap_v2 = lambda x: 463.647 * (((x / 1613.68) ** 0.5) - 1)
 image_creation.create_plot_from_fn(
     LPPNL_Uniswap_v2,
     0,
@@ -45,7 +45,7 @@ image_creation.create_plot_from_fn(
     ylabel="PNL ($ Thousands)",
     title="ETH-USDT Liquidity Position PNL Uniswap v2",
 )
-Options_Portfolio_Target_PNL = lambda x: -463.647 * (((x/1613.68)**.5)-1)
+Options_Portfolio_Target_PNL = lambda x: -463.647 * (((x / 1613.68) ** 0.5) - 1)
 image_creation.create_plot_from_fn(
     Options_Portfolio_Target_PNL,
     0,

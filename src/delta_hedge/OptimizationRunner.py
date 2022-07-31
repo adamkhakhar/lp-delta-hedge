@@ -183,6 +183,6 @@ class OptimizationRunner:
                 ]
             }
         )
-        fname = f"{ROOT_DIR}/results/{self.name}_deriv_save_state.bin"
+        fname = f"{ROOT_DIR}/results/{self.name}_deriv_save_state.json"
         with open(fname, "w") as f:
             f.write(json.dumps(deriv_list))

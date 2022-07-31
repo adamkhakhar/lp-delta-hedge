@@ -1,11 +1,16 @@
 {
     "name": "UniswapV3_ETH_USD",
     "asset": "ETH",
-    "expired": false,
+    "long_only": "True",
     "learning_rate": 0.01,
     "final_price_lower_bound": 0,
     "final_price_upper_bound": 5000,
-    "num_samples": 10000000,
-    "batch_size": 2000,
-    "test_batch_size": 100
+    "num_samples": 3000000,
+    "batch_size": 500,
+    "test_batch_size": 100,
+    "log_every": 10,
+    "initial_asset_price": 1613.68,
+    "portfolio_initial_value": 463647,
+    "lp_lower_bound": 0,
+    "lp_upper_bound": 0
 }

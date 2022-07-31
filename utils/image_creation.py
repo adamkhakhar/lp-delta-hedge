@@ -20,8 +20,14 @@ def create_plot_from_fn(
     num=1_000,
 ):
     fzig, ax = plt.subplots()
-    x = np.linspace(x_min, x_max, num=num)
-    y = [f(x_i) for x_i in x]
+    x = None
+    y = None
+    if type(f) == list:
+        x = np.linspace(x_min, x_max, len(f))
+        y = f
+    else:
+        x = np.linspace(x_min, x_max, num=num)
+        y = [f(x_i) for x_i in x]
     plt.plot(x, y)
     ax.spines["right"].set_color((0.8, 0.8, 0.8))
     ax.spines["top"].set_color((0.8, 0.8, 0.8))
@@ -33,7 +39,7 @@ def create_plot_from_fn(
         plt.axhline(y=0, color="black", linestyle="dotted", alpha=0.25)
 
     if shade_pnl:
-        zeros = np.zeros(x.shape)
+        zeros = np.zeros(len(x))
         ax.fill_between(x, y, zeros, where=(y < zeros), color="darkred", alpha=1 / 12)
         ax.fill_between(x, y, zeros, where=(y > zeros), color="darkgreen", alpha=1 / 12)
 
