@@ -72,11 +72,8 @@ if __name__ == "__main__":
             )
         return final_amount_a * final_price + final_amount_b
 
-    TARGET_FUN = lambda x: (
-        final_value_pool_assets(-1 * x) / config["portfolio_initial_value"] - 1
-    ) * (
-        config["initial_asset_a_amt"] * config["initial_asset_price"]
-        + config["initial_asset_b_amt"]
+    TARGET_FUN = lambda x: -1 * (
+        final_value_pool_assets(x) - config["portfolio_initial_value"]
     )
 
     data_params = {
@@ -105,7 +102,7 @@ if __name__ == "__main__":
     print("Finished training...")
     runner.save_state()
     runner.pretty_print_results()
-    runner.present_pnl("Options Portfolio Payoff - ETH USD - Concentrated Liquidity")
+    runner.present_pnl("Options Portfolio Payoff - BTC USD - Concentrated Liquidity")
     runner.present_strategy_pnl(
-        "ETH-USDC Delta-Hedged Liquidity Position PNL - Uniswap v3"
+        "BTC-USDC Delta-Hedged Liquidity Position PNL - Uniswap v3"
     )
