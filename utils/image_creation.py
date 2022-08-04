@@ -60,7 +60,7 @@ def create_plot_from_fn(
 
     plt.tight_layout()
     plt.grid(linestyle="--", alpha=0.25)
-    plt.savefig(f"{save_path}/{save_title}")
+    plt.savefig(f"{save_path}/{save_title}", bbox_inches="tight")
 
 
 def create_liquidity_plot(
