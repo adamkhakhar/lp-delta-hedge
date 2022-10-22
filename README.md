@@ -1,7 +1,9 @@
 # Liquidity Provision Delta Hedge Via Options
 Includes code to find an options portfolio to delta hedge both Uniswap v2 and Uniswap v3, emperical results, and plots. [Paper](https://arxiv.org/abs/2208.03318).
 
-Akhilesh (Adam) Khakhar and Xi Chen. 2022. Delta Hedging Liquidity Positions on Automated Market Makers. [https://arxiv.org/abs/2208.03318](https://arxiv.org/abs/2208.03318) 
+Adam Khakhar and Xi Chen. 2022. Delta Hedging Liquidity Positions on Automated Market Makers. [https://arxiv.org/abs/2208.03318](https://arxiv.org/abs/2208.03318).
+
+![Poster](results/Delta_Hedging_Liquidity_Positions_Poster.png)
 
 If you use this code/research, please cite:
 ```
@@ -10,7 +12,7 @@ If you use this code/research, please cite:
   
   url = {https://arxiv.org/abs/2208.03318},
   
-  author = {Khakhar, Akhilesh Adam and Chen, Xi},
+  author = {Khakhar, Adam and Chen, Xi},
   
   keywords = {Computational Engineering, Finance, and Science (cs.CE), Machine Learning (cs.LG), Trading and Market Microstructure (q-fin.TR), FOS: Computer and information sciences, FOS: Computer and information sciences, FOS: Economics and business, FOS: Economics and business, F.m},
   
